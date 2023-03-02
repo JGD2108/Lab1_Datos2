@@ -46,6 +46,7 @@ class BPlusTree:
         i = bisect.bisect_left(node.keys, key)
         node.keys.insert(i, key)
         node.value1.insert(i, value1)
+        ##hello
         node.value2.insert(i, value2)
 
     def _split_leaf_node(self, node):
