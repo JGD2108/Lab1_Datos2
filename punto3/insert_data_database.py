@@ -1,7 +1,7 @@
 import sqlite3
 
 # Connect to the SQLite database
-conn = sqlite3.connect('mydatabase.db')
+conn = sqlite3.connect('Rtramite.db')
 
 # Create a cursor object to execute SQL commands
 cursor = conn.cursor()

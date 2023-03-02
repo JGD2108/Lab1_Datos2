@@ -37,7 +37,7 @@ class BPlusTree:
         # Traverse the tree to find the leaf node where the key should be inserted
         node = self.root
         while not node.is_leaf:
-            i = bisect.bisect_right(node.keys, key) - 1
+            i = bisect.bisect_right(node.keys, key) - 1 # sirve para insertar un elemento en una lista ordenada, pero manteniendo ese orden después de la inserción
             node = node.children[i]
         return node
 
@@ -46,11 +46,22 @@ class BPlusTree:
         i = bisect.bisect_left(node.keys, key)
         node.keys.insert(i, key)
         node.value1.insert(i, value1)
-        ##hello
         node.value2.insert(i, value2)
 
     def _split_leaf_node(self, node):
-        # Split the leaf node in two
+        """
+        El método primero determina el índice de división como el punto 
+        medio de la lista de claves en el nodo. A continuación, crea un 
+        nuevo nodo de hoja con el mismo orden que el nodo original y 
+        establece sus atributos de keys, value y value2 en la segunda 
+        mitad de los atributos correspondientes del nodo original. 
+        Finalmente, las claves del nodo original, los atributos value1 y value2 
+        se actualizan para incluir solo la primera mitad de sus atributos correspondientes.
+        Si el nodo que se divide es la raíz, se crea una nueva raíz y se agregan los nodos 
+        original y nuevo como hijos de la raíz. De lo contrario, se busca el nodo padre del 
+        nodo original y se inserta el nuevo nodo en la posición correcta en la lista de hijos 
+        del padre y se actualiza la lista de claves del padre en consecuencia.
+        """
         split_index = len(node.keys) // 2
         new_node = BPlusTreeNode(self.order, True)
         new_node.keys = node.keys[split_index:]
@@ -73,6 +84,21 @@ class BPlusTree:
             parent.children.insert(i+1, new_node)
 
     def _find_parent_node(self, node):
+        """
+        El método comienza definiendo el nodo raíz como el nodo padre. 
+        Luego, entra en un bucle while que recorre el árbol buscando el 
+        padre del nodo dado. Primero, se verifica si el primer hijo del 
+        nodo padre es igual al nodo dado. Si es así, se devuelve el nodo padre.
+        Si el primer hijo del nodo padre no es igual al nodo dado, el método 
+        recorre la lista de hijos restantes del nodo padre utilizando un bucle for. 
+        Para cada hijo restante, el método compara la clave del nodo dado 
+        con la clave del hijo actual. Si la clave del nodo dado es menor que la c
+        lave del hijo actual, el método actualiza el nodo padre a ser el hijo 
+        actual y se rompe el bucle for. Si el hijo actual es igual al nodo dado, 
+        el método devuelve el nodo padre. Si el método llega al final de la lista 
+        de hijos del nodo padre sin encontrar el nodo dado, el bucle while continuará 
+        buscando el padre en el siguiente nivel del árbol.
+        """
         # Traverse the tree to find the parent node of the given node
         parent = self.root
         while True:
@@ -91,7 +117,7 @@ class BPlusTree:
         # Search for the key in the leaf node
         i = bisect.bisect_left(node.keys, key)
         while i < len(node.keys) and node.keys[i] == key:
-            print(f"Placa: {key}, Nombre: {node.value1[i]}, Cedula: {node.value2[i]}")
+            print(f"Placa: {key}, Nombre: {node.value1[i]}, Cedula: {node.value2[i]}") # imporime info del nodo
             i += 1
 
     def _find_leaf_node(self, key):
@@ -117,7 +143,7 @@ class BPlusTree:
         
 if __name__ == '__main__':
 # Open SQLite database and execute query
-    conn = sqlite3.connect('mydatabase.db')
+    conn = sqlite3.connect('Rtramite.db')
     c = conn.cursor()
     c.execute('SELECT placa, nombre, cc FROM mytable')
 
@@ -138,4 +164,4 @@ if __name__ == '__main__':
     # Close SQLite database connection
     conn.close()
     tree.print_tree()
-    tree.find_node("JGO954")
+    tree.find_node("EMT219")
